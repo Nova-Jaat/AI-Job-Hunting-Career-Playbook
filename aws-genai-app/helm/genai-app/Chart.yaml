@@ -1,0 +1,6 @@
+apiVersion: v2
+name: genai-app
+description: Production Helm chart for AWS Bedrock + OpenSearch GenAI Application on EKS
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

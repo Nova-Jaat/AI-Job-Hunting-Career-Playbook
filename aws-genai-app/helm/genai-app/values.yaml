@@ -1,0 +1,60 @@
+global:
+  environment: prod
+  region: us-east-1
+
+backend:
+  replicaCount: 3
+  image:
+    repository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/genai-backend
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  serviceAccount:
+    create: true
+    name: genai-backend-sa
+    roleArn: "arn:aws:iam::123456789012:role/genai-backend-irsa-role-prod"
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  env:
+    AWS_REGION: us-east-1
+    BEDROCK_MODEL_ID: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    BEDROCK_EMBEDDING_MODEL_ID: "amazon.titan-embed-text-v2:0"
+    OPENSEARCH_ENDPOINT: "https://xxxxxx.us-east-1.aoss.amazonaws.com"
+    OPENSEARCH_INDEX_NAME: "genai-knowledge-base"
+    ENABLE_XRAY: "true"
+    LOG_LEVEL: "INFO"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/genai-frontend
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+  host: app.genai.example.com

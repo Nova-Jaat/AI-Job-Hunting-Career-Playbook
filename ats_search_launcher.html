@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATS Direct Job Search Launcher | DevOps & Cloud</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .search-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    input, select {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    .skills-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .chip {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .chip.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .mega-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s, opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-mega-startup {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+    }
+
+    .btn-mega-enterprise {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+    }
+
+    .btn-mega-all {
+      background: linear-gradient(135deg, #059669, #0d9488);
+      color: white;
+    }
+
+    .btn:hover {
+      opacity: 0.92;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .platform-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .platform-card:hover {
+      border-color: #475569;
+      transform: translateY(-2px);
+    }
+
+    .platform-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .platform-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .platform-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: #334155;
+      color: #cbd5e1;
+    }
+
+    .platform-domain {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-family: monospace;
+      margin-bottom: 0.5rem;
+    }
+
+    .platform-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      min-height: 2.5rem;
+    }
+
+    .query-preview {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      word-break: break-all;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .query-preview:hover {
+      background: #172033;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.45rem 0.8rem;
+      font-size: 0.82rem;
+      border-radius: 6px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: #7dd3fc;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--text-muted);
+      color: #fff;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Direct ATS Job Search Engine</h1>
+      <p>Bypass LinkedIn application clutter by searching unmediated employer career boards directly on Google</p>
+    </header>
+
+    <section class="search-panel">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="roleInput">Target Role / Title</label>
+          <input type="text" id="roleInput" value="DevOps Engineer" list="roleSuggestions" placeholder="e.g. DevOps Engineer">
+          <datalist id="roleSuggestions">
+            <option value="DevOps Engineer">
+            <option value="Cloud Engineer">
+            <option value="Platform Engineer">
+            <option value="Site Reliability Engineer">
+            <option value="Infrastructure Engineer">
+            <option value="Cloud Infrastructure Engineer">
+            <option value="Linux Systems Engineer">
+          </datalist>
+        </div>
+
+        <div class="form-group">
+          <label for="locationInput">Target Location / Mode</label>
+          <input type="text" id="locationInput" value="India" list="locationSuggestions" placeholder="e.g. India or Remote">
+          <datalist id="locationSuggestions">
+            <option value="India">
+            <option value="Remote">
+            <option value="Bengaluru">
+            <option value="Hyderabad">
+            <option value="Pune">
+            <option value="Gurgaon">
+            <option value="Noida">
+            <option value="Chennai">
+          </datalist>
+        </div>
+
+        <div class="form-group">
+          <label for="freshness">Posting Freshness (Date Filter)</label>
+          <select id="freshness">
+            <option value="qdr:w" selected>Past 7 Days (Fresh & Active)</option>
+            <option value="qdr:m">Past 30 Days (Standard)</option>
+            <option value="qdr:d">Past 24 Hours (Ultra-Fresh)</option>
+            <option value="">Any Time (All indexed)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <label>Optional Core Tech Stack Keywords (Click to toggle)</label>
+        <div class="chips" id="stackChips">
+          <span class="chip" data-skill="Terraform">Terraform</span>
+          <span class="chip" data-skill="AWS">AWS</span>
+          <span class="chip" data-skill="Azure">Azure</span>
+          <span class="chip" data-skill="Docker">Docker</span>
+          <span class="chip" data-skill="Kubernetes">Kubernetes</span>
+          <span class="chip" data-skill="Linux">Linux</span>
+          <span class="chip" data-skill="RHCSA">RHCSA</span>
+          <span class="chip" data-skill="CI/CD">CI/CD</span>
+        </div>
+      </div>
+
+      <div class="mega-buttons">
+        <button class="btn btn-mega-startup" id="btnStartupMega">
+          🚀 Search Modern Scaleups (Ashby + Greenhouse + Lever)
+        </button>
+        <button class="btn btn-mega-enterprise" id="btnEnterpriseMega">
+          🏢 Search Enterprise & MNCs (Workday + SmartRecruiters + iCIMS)
+        </button>
+        <button class="btn btn-mega-all" id="btnOpenAll">
+          ⚡ Launch All 10 Platforms (Opens 10 Tabs)
+        </button>
+      </div>
+    </section>
+
+    <h2 class="section-title">🎯 Individual ATS Search Targets</h2>
+    <div class="platforms-grid" id="platformsContainer"></div>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    const platforms = [
+      {
+        id: "ashby",
+        name: "Ashby",
+        domain: "jobs.ashbyhq.com",
+        tag: "Modern Startups / Tech-first",
+        desc: "Dominant ATS for high-growth tech startups, modern YC companies, and remote-first engineering teams."
+      },
+      {
+        id: "greenhouse",
+        name: "Greenhouse",
+        domain: "boards.greenhouse.io",
+        fallbackDomain: "greenhouse.io",
+        tag: "Tech Scaleups & Unicorns",
+        desc: "The undisputed industry standard for tech unicorns, mid-tier SaaS companies, and established product firms."
+      },
+      {
+        id: "lever",
+        name: "Lever",
+        domain: "jobs.lever.co",
+        fallbackDomain: "lever.co",
+        tag: "Product & Growth Tech",
+        desc: "Heavily utilized by modern product organizations, fast-growing tech firms, and engineering consulting boutiques."
+      },
+      {
+        id: "smartrecruiters",
+        name: "SmartRecruiters",
+        domain: "jobs.smartrecruiters.com",
+        fallbackDomain: "smartrecruiters.com",
+        tag: "Mid-Market & Global Tech",
+        desc: "Widely used by global digital brands, mid-to-large engineering enterprises, and international tech providers."
+      },
+      {
+        id: "workday",
+        name: "Workday",
+        domain: "myworkdayjobs.com",
+        tag: "Fortune 500 & Global MNCs",
+        desc: "Used by banking institutions, enterprise MNCs, telecom giants, and Fortune 500 tech companies (covers wd1, wd3, wd5 subdomains)."
+      },
+      {
+        id: "bamboohr",
+        name: "BambooHR",
+        domain: "jobs.bamboohr.com",
+        fallbackDomain: "bamboohr.com",
+        tag: "SMBs & Boutique Tech",
+        desc: "Favorite choice for agile mid-sized tech companies, boutique cloud consultancies, and remote engineering studios."
+      },
+      {
+        id: "jobvite",
+        name: "Jobvite",
+        domain: "jobs.jobvite.com",
+        fallbackDomain: "jobvite.com",
+        tag: "Enterprise Tech",
+        desc: "Commonly deployed across established tech conglomerates, enterprise IT providers, and telecom providers."
+      },
+      {
+        id: "icims",
+        name: "iCIMS",
+        domain: "careers.icims.com",
+        fallbackDomain: "icims.com",
+        tag: "Global IT Services & Banks",
+        desc: "Standard for massive global IT system integrators, healthcare tech giants, and global financial firms."
+      },
+      {
+        id: "jazzhr",
+        name: "JazzHR",
+        domain: "apply.jazz.co",
+        fallbackDomain: "jazzhr.com",
+        tag: "Early Stage Startups",
+        desc: "Commonly selected by agile early-stage tech teams, startups, and specialized technical consultancies."
+      },
+      {
+        id: "workable",
+        name: "Workable",
+        domain: "careers.workable.com",
+        fallbackDomain: "workable.com",
+        tag: "Global SaaS & Tech",
+        desc: "High adoption across international SaaS platforms, global distributed companies, and tech startups."
+      }
+    ];
+
+    const roleInput = document.getElementById("roleInput");
+    const locationInput = document.getElementById("locationInput");
+    const freshnessSelect = document.getElementById("freshness");
+    const platformsContainer = document.getElementById("platformsContainer");
+    const chips = document.querySelectorAll(".chip");
+    const toast = document.getElementById("toast");
+
+    let selectedSkills = [];
+
+    // Toggle skills
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        const skill = chip.dataset.skill;
+        if (selectedSkills.includes(skill)) {
+          selectedSkills = selectedSkills.filter(s => s !== skill);
+          chip.classList.remove("active");
+        } else {
+          selectedSkills.push(skill);
+          chip.classList.add("active");
+        }
+        renderCards();
+      });
+    });
+
+    [roleInput, locationInput, freshnessSelect].forEach(el => {
+      el.addEventListener("input", renderCards);
+    });
+
+    function getCleanQueryTerms() {
+      const role = roleInput.value.trim();
+      const loc = locationInput.value.trim();
+      let parts = [];
+      if (role) parts.push(`"${role}"`);
+      if (loc) parts.push(`"${loc}"`);
+      if (selectedSkills.length > 0) {
+        parts.push(`(${selectedSkills.map(s => `"${s}"`).join(" OR ")})`);
+      }
+      return parts.join(" ");
+    }
+
+    function buildSearchUrl(domain, isCustom = false) {
+      const terms = getCleanQueryTerms();
+      const query = isCustom ? domain : `site:${domain} ${terms}`;
+      const freshness = freshnessSelect.value;
+      let url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      if (freshness) {
+        url += `&tbs=${freshness}`;
+      }
+      return url;
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 2000);
+    }
+
+    function renderCards() {
+      platformsContainer.innerHTML = "";
+      const terms = getCleanQueryTerms();
+
+      platforms.forEach(p => {
+        const queryText = `site:${p.domain} ${terms}`;
+        const searchUrl = buildSearchUrl(p.domain);
+
+        const card = document.createElement("div");
+        card.className = "platform-card";
+        card.innerHTML = `
+          <div>
+            <div class="platform-header">
+              <span class="platform-name">${p.name}</span>
+              <span class="platform-tag">${p.tag}</span>
+            </div>
+            <div class="platform-domain">site:${p.domain}</div>
+            <div class="platform-desc">${p.desc}</div>
+            <div class="query-preview" title="Click to copy search string" onclick="copyDork('${queryText.replace(/'/g, "\\'")}')">
+              ${queryText}
+            </div>
+          </div>
+          <div class="card-actions">
+            <a href="${searchUrl}" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Search Google ↗</a>
+            <button class="btn btn-sm btn-outline" onclick="copyDork('${queryText.replace(/'/g, "\\'")}')">Copy Dork</button>
+          </div>
+        `;
+        platformsContainer.appendChild(card);
+      });
+    }
+
+    window.copyDork = function(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Search query copied to clipboard!");
+      });
+    };
+
+    // Mega search startup
+    document.getElementById("btnStartupMega").addEventListener("click", () => {
+      const terms = getCleanQueryTerms();
+      const megaQuery = `(site:jobs.ashbyhq.com OR site:boards.greenhouse.io OR site:jobs.lever.co) ${terms}`;
+      window.open(buildSearchUrl(megaQuery, true), "_blank");
+    });
+
+    // Mega search enterprise
+    document.getElementById("btnEnterpriseMega").addEventListener("click", () => {
+      const terms = getCleanQueryTerms();
+      const megaQuery = `(site:myworkdayjobs.com OR site:jobs.smartrecruiters.com OR site:careers.icims.com) ${terms}`;
+      window.open(buildSearchUrl(megaQuery, true), "_blank");
+    });
+
+    // Open all 10
+    document.getElementById("btnOpenAll").addEventListener("click", () => {
+      if (confirm("This will open 10 tabs in your browser (one for each ATS platform). Continue?")) {
+        platforms.forEach((p, idx) => {
+          setTimeout(() => {
+            window.open(buildSearchUrl(p.domain), "_blank");
+          }, idx * 250);
+        });
+      }
+    });
+
+    renderCards();
+  </script>
+</body>
+</html>
